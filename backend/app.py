@@ -33,6 +33,9 @@ def get_data():
         df = df[df['date'] >= start_date]
     if end_date:
         df = df[df['date'] <= end_date]
+    # Clean up NaN and infinite values for the selected metric
+    if metric in df.columns:
+        df[metric] = pd.to_numeric(df[metric], errors='coerce').fillna(0).replace([float('inf'), float('-inf')], 0)
     result = df[['date', 'location', metric]].to_dict(orient='records')
     return jsonify(result)
 
